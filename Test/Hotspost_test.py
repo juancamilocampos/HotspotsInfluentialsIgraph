@@ -17,8 +17,9 @@ inf = gv.influentials(graph_directed)
 # f.write('}')
 # f.close()
 
-print(graph_undirected.vcount())
-g = (graph_undirected.decompose(maxcompno=1)[0])  # To get the largest connected component
+graphs = graph_undirected.decompose(maxcompno=1)  # To get the largest connected component
+graphs_count = [g.vcount() for g in graphs]
+g = graphs[graphs_count.index(max(graphs_count))]
 print(g.vcount())
 K = list(set(inf).intersection(g.vs["name"]))
 g = gv.parallel_dijkstra_undirected(g, sorted(K))
@@ -38,9 +39,9 @@ for v in range(g.vcount()):
 
 results = gv.groups(lista)
 
-[hotspot_boolean, c, weights_influentials] = gv.graph_hotspots(results, K, g, 1.01)
-print(1)
-f = open('weights-between-influentials-24.txt', 'w')
+[hotspot_boolean, c, weights_influentials] = gv.graph_hotspots(results, sorted(K), g, 1.01)
+print(c)
+f = open('weights-between-influentials-241.txt', 'w')
 f.write('{')
 for item in weights_influentials:
     f.write("%s " % item)

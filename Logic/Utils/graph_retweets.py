@@ -45,7 +45,6 @@ class GraphRetweets:
         cursor.close()
         self.nodes = list(self.nodes_attribute_friends.keys())
 
-
         self.edges_weight = Counter(self.edges).most_common()
         self.edges_weight = [(s[0][0], s[0][1], s[1]) for s in self.edges_weight]
 

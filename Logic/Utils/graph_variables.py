@@ -154,7 +154,6 @@ def parallel_dijkstra_undirected(g, k):
     for v in nodes:
         nbors[v] = [nodes[s] for s in graph.neighbors(v)]
 
-    print(k[1])
     ids = {}
     for i in range(graph.vcount()):
         ids[nodes[i]] = i
@@ -241,17 +240,16 @@ def graph_hotspots(dict_voronoi, K, g, max_distance):
     # it stars to calculate them.
 
     if c >= 0.70:
-
         # Hk is the set of the breaking nodes which build the "small" voronoi cells.
         Hk = list()
         for i in range(px):
             Hk.append(cell_sizes[i][0])
 
         weights_distribution = list()
-        wei= g.es["weight"]
-        for i in range(ncells-1):
-            for j in (i+1,ncells):
-                weights_distribution.append(g.shortest_paths_dijkstra(Hk[i], Hk[j], weights=wei)[0][0])
+        wei = g.es["weight"]
+        print(Hk[0])
+        for i in range(1, len(Hk)):
+            weights_distribution.append(g.shortest_paths_dijkstra(Hk[0], Hk[i], weights=wei)[0][0])
 
         # final_hotspots = _hotspots_breaking_nodes(dict_voronoi, Hk, g, maxdistance)
         # return [True, c, final_hotspots]
