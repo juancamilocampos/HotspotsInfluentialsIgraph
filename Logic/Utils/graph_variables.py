@@ -197,3 +197,65 @@ def groups(many_to_one):
     for v, k in many_to_one.items():
         one_to_many[k].append(v)
     return dict(one_to_many)
+
+
+def graph_hotspots(dict_voronoi, K, g, max_distance):
+    """
+    :Date: 2016-09-18
+    :Version: 0.1
+    :Author: Juan Camilo Campos - Pontificia Universidad Javeriana Cali
+    :Copyright: To be defined
+    :Organization: Centro de Excelencia y Apropiación de Big Data y Data Analytics - CAOBA
+
+    This method establishes the existence of hotspots in a Graph. Furthermore, if there are hotspots, then it returns which are the hotspots
+
+    :param: dict_voronoi: dictionary with the information about the voronoi segmentation
+    :param: K: breaking nodes (sometimes the influentials)
+    :param: g: unweighted and undirected graph
+    :param: max_distance: maximum distance between breaking point to be considered as a part of the same hotspots
+    :rtype: list [hotspotboolean,c,final_hotspots]
+    :return: hotspotboolean: It is True if there are hotspots in the graph
+    :return: c: The percentage of crimes or influentials when there is the 30% of the network in the accumulative distribution
+    :return: final_hotspots: If there are hotspots, it contains the hotspots
+    """
+    cell_sizes = list()
+    for k in K:
+        cell_sizes.append([k, len(dict_voronoi[k])])
+
+    cell_sizes = sorted(cell_sizes, key=lambda t: t[1])
+
+    nnodes = g.vcount()
+    nodes_distribution = [0]
+    influentials_distribution = list()
+    ncells = len(K)
+    c = 0
+    for i in range(ncells):
+        nodes_distribution.append(nodes_distribution[-1] + cell_sizes[i][1])
+        [x, y] = [1.0 * (i + 1) / ncells, 1.0 * nodes_distribution[-1] / nnodes]
+        influentials_distribution.append([x, y])
+        if y <= 0.3:
+            c = x
+            px = i
+
+    # If more than the 70% of influentials are contained in the 30% of the network, then there are hostposts and
+    # it stars to calculate them.
+
+    if c >= 0.70:
+
+        # Hk is the set of the breaking nodes which build the "small" voronoi cells.
+        Hk = list()
+        for i in range(px):
+            Hk.append(cell_sizes[i][0])
+
+        weights_distribution = list()
+        wei= g.es["weight"]
+        for i in range(ncells-1):
+            for j in (i+1,ncells):
+                weights_distribution.append(g.shortest_paths_dijkstra(Hk[i], Hk[j], weights=wei)[0][0])
+
+        # final_hotspots = _hotspots_breaking_nodes(dict_voronoi, Hk, g, maxdistance)
+        # return [True, c, final_hotspots]
+        return [True, c, weights_distribution]
+
+    else:
+        return [False, 0, {}]
