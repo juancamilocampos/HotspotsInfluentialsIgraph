@@ -26,8 +26,6 @@ g = gv.parallel_dijkstra_undirected(g, sorted(K))
 Du = g.vs["Dv"]
 Vu = g.vs["V"]
 
-print(Vu.count('id:twitter.com:100293263'))
-
 nodes = g.vs["name"]
 ids = {}
 for i in range(g.vcount()):
