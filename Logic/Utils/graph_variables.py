@@ -241,7 +241,7 @@ def graph_hotspots(dict_voronoi, K, g, max_distance):
     # If more than the 70% of influentials are contained in the 30% of the network, then there are hostposts and
     # it stars to calculate them.
 
-    if c >= 0.70:
+    if c >= 0.65:
         # Hk is the set of the breaking nodes which build the "small" voronoi cells.
         Hk = list()
         for i in range(px):
@@ -259,4 +259,4 @@ def graph_hotspots(dict_voronoi, K, g, max_distance):
         return [True, c, weights_distribution]
 
     else:
-        return [False, 0, {}]
+        return [False, c, {}]

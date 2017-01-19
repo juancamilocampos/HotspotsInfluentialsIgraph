@@ -8,7 +8,7 @@ graph_class = GraphRetweets()
 inf = gv.influentials(graph_directed)
 
 edges_weight = graph_undirected.es["weight"]
-f = open('weights-25.txt', 'w')
+f = open('weights-27.txt', 'w')
 f.write('{')
 for item in edges_weight:
     f.write("%s " % item)
@@ -39,7 +39,7 @@ results = gv.groups(lista)
 
 [hotspot_boolean, c, weights_influentials] = gv.graph_hotspots(results, sorted(K), g, 1.01)
 print(c)
-f = open('weights-between-influentials-25.txt', 'w')
+f = open('weights-between-influentials-27.txt', 'w')
 f.write('{')
 for item in weights_influentials:
     f.write("%s " % item)
