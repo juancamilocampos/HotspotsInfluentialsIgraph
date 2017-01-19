@@ -45,7 +45,8 @@ def influentials(g):
     :rtype: list
     :return: Returns the list of influential users
     """
-    threshold = 1 / 10.0
+    threshold1 = 1/100.0
+    threshold2 = 1/10.0
 
     nodes = g.vs["name"]
 
@@ -73,12 +74,13 @@ def influentials(g):
             x = retweets[i] / float(times_retweeted[i])
             y = friends[i] / float(followers[i])
 
-            if (x < threshold) and (y < threshold):
+            if (x < threshold1) and (y < threshold2):
                 list_influentials = list_influentials + [nodes[i]]
 
             i += 1
 
     return list_influentials
+
 
 def _interest_entrophy(C, Hu):
     """

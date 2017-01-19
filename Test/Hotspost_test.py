@@ -21,6 +21,7 @@ graphs = graph_undirected.decompose(maxcompno=1)  # To get the largest connected
 graphs_count = [g.vcount() for g in graphs]
 g = graphs[graphs_count.index(max(graphs_count))]
 K = list(set(inf).intersection(g.vs["name"]))
+print(len(K))
 g = gv.parallel_dijkstra_undirected(g, sorted(K))
 Du = g.vs["Dv"]
 Vu = g.vs["V"]
