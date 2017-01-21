@@ -247,16 +247,75 @@ def graph_hotspots(dict_voronoi, K, g, max_distance):
         for i in range(px):
             Hk.append(cell_sizes[i][0])
 
-        weights_distribution = list()
-        wei = g.es["weight"]
-        print(Hk[0])
-        for i in range(len(Hk)-1):
-            for j in range(i+1, len(Hk)):
-                weights_distribution.append(g.shortest_paths_dijkstra(Hk[i], Hk[j], weights=wei)[0][0])
+        # weights_distribution = list()
+        # wei = g.es["weight"]
+        print(len(Hk))
 
-        # final_hotspots = _hotspots_breaking_nodes(dict_voronoi, Hk, g, maxdistance)
-        # return [True, c, final_hotspots]
-        return [True, c, weights_distribution]
+        # for i in range(len(Hk)-1):
+        #    for j in range(i+1, len(Hk)):
+        #         weights_distribution.append(g.shortest_paths_dijkstra(Hk[i], Hk[j], weights=wei)[0][0])
+
+        final_hotspots = _hotspots_breaking_nodes(dict_voronoi, Hk, g, max_distance)
+        return [True, c, final_hotspots]
+        # return [True, c, weights_distribution]
 
     else:
         return [False, c, {}]
+
+
+def _hotspots_breaking_nodes(dict_voronoi, Hk, g, max_distance):
+    """
+    :Date: 2016-09-18
+    :Version: 0.1
+    :Author: Juan Camilo Campos - Pontificia Universidad Javeriana Cali
+    :Copyright: Por definir
+    :Organization: Centro de Excelencia y Apropiación de Big Data y Data Analytics - CAOBA
+
+    This method finds the hotspots in a graph
+
+    :param: dict_voronoi: dictionary with the information about the voronoi segmentation
+    :param: Kh: breaking nodes which build the "small" voronoi cells (sometimes the influentials)
+    :param: g: unweighted and undirected graph
+    :param: maxdistance: maximum distance between breaking point to be considered as a part of the same hotspots
+    :rtype: list of hotspots
+    :return: finalhotspots: list with the nodes that every hotspot contains.
+    """
+
+    hotspots = list()
+    for i in range(len(Hk)):
+        hotspots.append(i)
+
+    wei = g.es["weight"]
+    i = 0
+    while i < (len(Hk)-1):
+        j = i+1
+        while j < len(Hk):
+            if hotspots[i] != hotspots[j]:
+                # Here two voronoi cells are integrated in the same hotspot if their distance is less than
+                # the maxdistance
+                d = g.shortest_paths_dijkstra(Hk[i], Hk[j], weights=wei)[0][0]
+                if d <= max_distance:
+                    gs = g.subgraph(list(set(dict_voronoi[Hk[i]]).union(set(dict_voronoi[Hk[i]]))))
+                    if gs.is_connected():
+                        hotspot_son = hotspots[j]
+                        hotspot_parent = hotspots[i]
+                        hotspots = _replace(hotspots, hotspot_son, hotspot_parent)
+
+            j += 1
+        i += 1
+
+
+    hotspots_set = list(set(hotspots))
+    final_hotspots = list()
+    for h in hotspots_set:
+        indices = [i for i, x in enumerate(hotspots) if x == h]
+        # This condition guarantees that an union of voronoi cells can be considered as a hotspot if it contains almost
+        # the 2% of the "small" voronoi cells.
+        if (len(indices) + 1) > (0.02 * (len(Hk) + 1)):
+            hotspoth = list()
+            for i in indices:
+                # hotspoth = hotspoth + dict_voronoi[Hk[i]]
+                hotspoth = hotspoth + [Hk[i]]
+            final_hotspots.append(hotspoth)
+
+    return final_hotspots

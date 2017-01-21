@@ -62,6 +62,6 @@ class GraphRetweets:
         self.graphdi.vs["friends"] = list(self.nodes_attribute_friends.values())
         self.graphdi.vs["followers"] = list(self.nodes_attribute_followers.values())
         self.graph.add_edges([(s[0], s[1]) for s in self.undirected_edges_weight])
-        self.graph.es["weight"] = ([1.0/s[2] for s in self.undirected_edges_weight])
+        self.graph.es["weight"] = ([1/s[2] for s in self.undirected_edges_weight])
 
         return [self.graphdi, self.graph]

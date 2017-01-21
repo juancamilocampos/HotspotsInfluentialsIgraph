@@ -6,9 +6,9 @@ graph_class = GraphRetweets()
 [graph_directed, graph_undirected] = graph_class.create()
 
 inf = gv.influentials(graph_directed)
-
+print(len(inf))
 edges_weight = graph_undirected.es["weight"]
-f = open('weights-27.txt', 'w')
+f = open('weights-25.txt', 'w')
 f.write('{')
 for item in edges_weight:
     f.write("%s " % item)
@@ -17,9 +17,10 @@ f.write("0")
 f.write('}')
 f.close()
 
-graphs = graph_undirected.decompose(maxcompno=1)  # To get the largest connected component
+graphs = graph_undirected.decompose()  # To get the largest connected component
 graphs_count = [g.vcount() for g in graphs]
 g = graphs[graphs_count.index(max(graphs_count))]
+
 K = list(set(inf).intersection(g.vs["name"]))
 print(len(K))
 g = gv.parallel_dijkstra_undirected(g, sorted(K))
@@ -37,14 +38,26 @@ for v in range(g.vcount()):
 
 results = gv.groups(lista)
 
-[hotspot_boolean, c, weights_influentials] = gv.graph_hotspots(results, sorted(K), g, 1.01)
+[hotspot_boolean, c, final_hotspots] = gv.graph_hotspots(results, sorted(K), g, 0.111)
 print(c)
-f = open('weights-between-influentials-27.txt', 'w')
+print(len(final_hotspots))
+f = open('hotspots-011-25.txt', 'w')
 f.write('{')
-for item in weights_influentials:
-    f.write("%s " % item)
+for item in final_hotspots:
+    f.write("%s " % len(item))
     f.write(",")
 
 f.write("0")
 f.write('}')
 f.close()
+# [hotspot_boolean, c, weights_influentials] = gv.graph_hotspots(results, sorted(K), g, 0.51)
+# print(c)
+# f = open('weights-between-influentials-27.txt', 'w')
+# f.write('{')
+# for item in weights_influentials:
+#     f.write("%s " % item)
+#     f.write(",")
+#
+# f.write("0")
+# f.write('}')
+# f.close()
